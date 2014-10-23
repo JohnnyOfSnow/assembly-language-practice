@@ -7,12 +7,16 @@ TITLE Reversing a String          (RevStr.asm)
 INCLUDE Irvine32.inc
 
 .data
+prompt BYTE "Enter a string you want to reverse: ",0
+prompt1 BYTE "The reverse result is: ",0
+
 aName BYTE 50 DUP(?)
 nameSize DWORD ?
 
 .code
 main PROC
-
+	mov edx,OFFSET prompt
+	call WriteString
 	mov edx,OFFSET aName
 	mov ecx,SIZEOF aName
 	call ReadString
@@ -40,6 +44,9 @@ L2:	pop eax				; get character
 	loop L2
 
 ; Display the name.
+
+	mov edx,OFFSET prompt1
+	call WriteString
 
 	mov  edx,OFFSET aName
 	call Writestring
