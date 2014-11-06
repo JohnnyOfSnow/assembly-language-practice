@@ -15,7 +15,7 @@ re DWORD ?
 
 prompt BYTE "How many fibonacci number do you want? ",0
 
-
+ 
 .code 
 main PROC
 	mov edx, OFFSET prompt
