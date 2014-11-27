@@ -2,28 +2,32 @@ TITLE MASM Template						(main.asm)
 
 INCLUDE Irvine32.inc
 .data
-arrayFlower BYTE "Spade","Heart","Club","Dimond"
+
 array DWORD 5 DUP(?)
 
 
 .code
 main PROC
 	call Clrscr
+	mov esi, OFFSET array
+	mov ecx,5
+	mov eax,52
+	inc eax
 	call RandomInput
 	exit
 main ENDP
 
 RandomInput PROC
-	mov esi, OFFSET array
-	mov ecx,5
-	mov eax,53
-	inc eax
+	call Randomize
 	L1:
 		call RandomRange
 		call WriteDec
-		mov array[esi],eax
+		inc eax
+		mov [esi],eax
 		call Crlf
-		add esi,TYPE DWORD
+		add esi,TYPE array
+		mov eax,52
+		inc eax
 		loop L1 
 		ret
 RandomInput ENDP
