@@ -1,12 +1,7 @@
-TITLE MASM Template						(main.asm)
-
 INCLUDE Irvine32.inc
 .data
 
-array DWORD 5 DUP(?)
-arrayCheck DWORD 53(0)
-check DWORD 0
-number DWORD ?
+array DWORD 5 DUP(0)
 
 
 .code
@@ -24,28 +19,28 @@ RandomInput PROC
 	call Randomize
 	L1:
 		call RandomRange
-		call WriteDec
+		
 		inc eax
-		push esi
 		push ecx
-			mov esi, OFFSET array
-			mov ecx,check
-			.WHILE ecx >= 1
-				.IF eax == [esi]
-					mov eax,52
-					inc eax
-					call RandomRange
-					call WriteDec
-					inc eax
-					mov ecx,check
-				.ENDIF
-				add esi,TYPE array
-				sub ecx,1
-			.ENDW
-		inc ecx
-		mov check,ecx
+		push esi
+		mov esi, OFFSET array
+		mov ecx,5
+		.WHILE ecx > 0
+			mov ebx,[esi]
+			add esi,TYPE array
+			.IF eax == ebx
+				mov eax,52
+				inc eax
+				call RandomRange
+				inc eax
+				mov ecx,5
+				mov esi, OFFSET array
+			.ENDIF
+			sub ecx,1	
+		.ENDW
 		pop esi
 		pop ecx
+		call WriteDec
 		mov [esi],eax
 		call Crlf
 		add esi,TYPE array
