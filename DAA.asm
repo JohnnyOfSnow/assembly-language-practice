@@ -13,28 +13,33 @@ main PROC
 
 	mov al,35h
 	add al,48h
+	call DAAItself
 	call WriteHex
 	exit
 main ENDP
 
 DAAItself PROC
-	push al
-	and al,11110000b
-	.IF	al > 9h && 
-		add al,6h
+	push eax
+	and al,00F0h
+	.IF	al > 9h 
+		pop eax
+		add eax,6h
 	.ELSE
-		pop al
+		pop eax
 	.ENDIF
 
-	push al
-	and al,00001111b
+	push eax
+	and al,00F0h
 
-	.IF	al > 9h && 
-		add al,60h
+	.IF	al > 9h && CARRY?
+		pop eax
+		add eax,60h
+		stc    ; carry = 1
 	.ELSE
-		pop al
+		clc    ; carry = 0
+		pop eax
 	.ENDIF
-
+	ret
 DAAItself ENDP
 
 END main
