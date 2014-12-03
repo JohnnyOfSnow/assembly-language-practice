@@ -49,7 +49,7 @@ DAAItself PROC
 	
 	and al,00F0h
 
-	.IF	al > 90h || CARRY?	;If (AL(hi) > 9) or Carry = 1
+	.IF	al > A0h || CARRY?	;If (AL(hi) > 9) or Carry = 1
 		add eax,60h			;AL = AL + 60h
 		push eax
 		stc					; carry = 1
