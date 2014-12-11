@@ -11,7 +11,7 @@ Swap PROTO,			; procedure prototype
 	pValY:PTR DWORD
 
 .data
-Array  DWORD  2 DUP(?)
+Array  SDWORD  2 DUP(?)
 myMessage BYTE "Start to enter two number",0dh,0ah,0
 myMessage1 BYTE "The first number: ",0dh,0ah,0
 myMessage2 BYTE "The second number: ",0dh,0ah,0
@@ -33,11 +33,11 @@ main PROC
 	
 	mov	 edx,OFFSET myMessage1
 	call WriteString
-	call ReadDec
+	call ReadInt
 	mov [esi],eax
 	mov	 edx,OFFSET myMessage2
 	call WriteString
-	call ReadDec
+	call ReadInt
 
 	mov[esi+4],eax
 
@@ -50,12 +50,12 @@ main PROC
 	call WriteString
 	mov  esi,OFFSET Array
 	mov eax,[esi]
-	call WriteDec
+	call WriteInt
 	call Crlf
 	mov	 edx,OFFSET myMessage2
 	call WriteString
 	mov eax,[esi + 4]
-	call WriteDec
+	call WriteInt
 	call Crlf
 	exit
 main ENDP
