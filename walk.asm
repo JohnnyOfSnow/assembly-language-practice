@@ -8,9 +8,9 @@ WalkMax = 50
 StartX = 25
 StartY = 25
 RangeXBelow = 0;
-RangeXUp = 50;
+RangeXUp = 79;
 RangeYBelow = 0;
-RangeYUp = 50;
+RangeYUp = 24;
 
 DrunkardWalk STRUCT
 	path COORD WalkMax DUP(<0,0>)
@@ -24,8 +24,8 @@ message BYTE "酒鬼走路；酒鬼隨機搖晃走50步，最後印出所有步�
 message1 BYTE "開始輸入起始座標",0
 message2 BYTE "請輸入X座標: ",0
 message3 BYTE "請輸入Y座標: ",0
-message4 BYTE "起始X 不在0~50的範圍，請重新輸入--->",0
-message5 BYTE "起始Y 不在0~50的範圍，請重新輸入--->",0
+message4 BYTE "起始X 不在0~79的範圍，請重新輸入--->",0
+message5 BYTE "起始Y 不在0~24的範圍，請重新輸入--->",0
 StartX1 WORD ?
 StartY1 WORD ?
 
@@ -42,7 +42,7 @@ main PROC
 	mov	 edx,OFFSET message2
 	call WriteString
 	call ReadInt
-	.IF eax < 0 || eax > 50
+	.IF eax < 0 || eax > 79
 		mov	 edx,OFFSET message4
 		call WriteString
 		jmp L9
@@ -55,7 +55,7 @@ main PROC
 	mov	 edx,OFFSET message3
 	call WriteString
 	call ReadInt
-	.IF eax < 0 || eax > 50
+	.IF eax < 0 || eax > 24
 		mov	 edx,OFFSET message5
 		call WriteString
 		jmp L10
@@ -133,7 +133,7 @@ LOCAL currX:WORD, currY:WORD
 	.ENDIF
 	Judge:
 	.IF eax == 0		; North
-	  .IF currY < RangeYBelow
+	  .IF currY < RangeYBelow || currY > RangeYUp
 			inc currY
 			jmp L24
 	  .ENDIF
@@ -145,7 +145,7 @@ LOCAL currX:WORD, currY:WORD
 	  .ENDIF
 	  jmp OK
 	.ELSEIF eax == 2	; West
-	  .IF currX < RangeXBelow
+	  .IF (currX < RangeXBelow) || (currX > RangeXUp)
 			inc currX
 			jmp L24
 	  .ENDIF
@@ -157,28 +157,28 @@ LOCAL currX:WORD, currY:WORD
 	  .ENDIF
 	  jmp OK
 	.ELSEIF eax == 4	; North East
-	  .IF currX > RangeXUp || currY > RangeYUp
+	  .IF (currX > RangeXUp) || (currY > RangeYUp)
 			dec currX
 			dec currY
 			jmp L24
 	  .ENDIF
 	  jmp OK
 	.ELSEIF eax == 5	; South East
-	   .IF currX > RangeXUp || currY < RangeYBelow
+	   .IF (currX > RangeXUp) || (currY < RangeYBelow) || (currY > RangeYUp)
 			dec currX
 			inc currY
 			jmp L24
 	  .ENDIF
 	  jmp OK
 	.ELSEIF eax == 6	; South West
-		.IF currX > RangeXUp || currY > RangeYUp
+		.IF (currX > RangeXUp) || (currY > RangeYUp)
 			inc currX
 			inc currY
 			jmp L24
 	  .ENDIF
 	  jmp OK
 	.ELSE			;  North West
-	  .IF currX < RangeXBelow || currY > RangeYUp
+	  .IF (currX < RangeXBelow) || (currY > RangeYUp) || (currX > RangeXUp)
 			inc currX
 			dec currY
 			jmp L24
