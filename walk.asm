@@ -41,8 +41,8 @@ main PROC
 	L9:
 	mov	 edx,OFFSET message2
 	call WriteString
-	call ReadDec
-	.IF eax < RangeXBelow || eax > RangeXUp
+	call ReadInt
+	.IF eax < 0 || eax > 50
 		mov	 edx,OFFSET message4
 		call WriteString
 		jmp L9
@@ -54,8 +54,8 @@ main PROC
 	L10:
 	mov	 edx,OFFSET message3
 	call WriteString
-	call ReadDec
-	.IF eax < RangeYBelow || eax > RangeYUp
+	call ReadInt
+	.IF eax < 0 || eax > 50
 		mov	 edx,OFFSET message5
 		call WriteString
 		jmp L10
