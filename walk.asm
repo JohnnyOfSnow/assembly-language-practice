@@ -24,6 +24,8 @@ message BYTE "酒鬼走路；酒鬼隨機搖晃走50步，最後印出所有步�
 message1 BYTE "開始輸入起始座標",0
 message2 BYTE "請輸入X座標: ",0
 message3 BYTE "請輸入Y座標: ",0
+message4 BYTE "起始X 不在0~50的範圍，請重新輸入--->",0
+message5 BYTE "起始Y 不在0~50的範圍，請重新輸入--->",0
 StartX1 WORD ?
 StartY1 WORD ?
 
@@ -41,6 +43,8 @@ main PROC
 	call WriteString
 	call ReadDec
 	.IF eax < RangeXBelow || eax > RangeXUp
+		mov	 edx,OFFSET message4
+		call WriteString
 		jmp L9
 		call Crlf
 	.ENDIF
@@ -52,6 +56,8 @@ main PROC
 	call WriteString
 	call ReadDec
 	.IF eax < RangeYBelow || eax > RangeYUp
+		mov	 edx,OFFSET message5
+		call WriteString
 		jmp L10
 		call Crlf
 	.ENDIF
@@ -83,7 +89,7 @@ LOCAL currX:WORD, currY:WORD
 	mov ax,StartY1
 	mov	currY,ax		; current Y-location
 
-Again:
+.WHILE ecx > 0
 	; Insert current location in array.
 	mov	ax,currX
 	mov	(COORD PTR [edi]).X,ax
@@ -125,11 +131,7 @@ Again:
 	  inc currY
 	  jmp Judge
 	.ENDIF
-	OK:
-	add	edi,TYPE COORD		; point to next COORD
-	loop Again
-
-Judge:
+	Judge:
 	.IF eax == 0		; North
 	  .IF currY < RangeYBelow
 			inc currY
@@ -183,6 +185,12 @@ Judge:
 	  .ENDIF
 	  jmp OK
 	.ENDIF
+
+	OK:
+	add	edi,TYPE COORD		; point to next COORD
+	dec ecx
+.ENDW
+
 
 Finish:
 	mov (DrunkardWalk PTR [esi]).pathsUsed, WalkMax
