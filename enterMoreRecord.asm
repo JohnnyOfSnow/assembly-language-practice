@@ -44,8 +44,8 @@ main PROC
 	mov ecx,SIZEOF buffer
 
 	.WHILE ebx > 0
-	
 		call ReadString
+		add edx,eax
 		call Crlf
 		sub ebx,1
 	.ENDW
