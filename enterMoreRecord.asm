@@ -5,7 +5,7 @@ TITLE Using WriteFile                  (WriteFile.asm)
 INCLUDE Irvine32.inc
 
 .data
-buffer DWORD 500 DUP(?),0dh,0ah
+buffer BYTE 40 DUP(?),0dh,0ah
 ;buffer BYTE "This text is written to an output file.",0dh,0ah
 bufSize DWORD ($-buffer)
 errMsg BYTE "Cannot create file",0dh,0ah,0
@@ -28,21 +28,18 @@ main PROC
 	call ReadString
 	call Crlf
 
-	;讓使用者輸入欲新建檔案的檔名
+	;讓使用者輸入要多少筆
 	mov edx,OFFSET prompt3
 	call WriteString
 	call ReadDec
 	mov Amount,eax
 	mov ebx, Amount
 
-	;讓使用者輸入新建檔案的內容
-	mov edx,OFFSET prompt2
-	call WriteString
-	call Crlf
+	
 
 	INVOKE CreateFile,
 	  ADDR filename, GENERIC_WRITE, DO_NOT_SHARE, NULL,
-	  CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0
+	  CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
 	
 	mov fileHandle,eax			; save file handle
 	.IF eax == INVALID_HANDLE_VALUE
@@ -52,12 +49,15 @@ main PROC
 	.ENDIF
 
 	.WHILE ebx > 0
+		;讓使用者輸入新建檔案的內容
+		mov edx,OFFSET prompt2
+		call WriteString
+		call Crlf
+
 		mov edx,OFFSET buffer
 		mov ecx,SIZEOF buffer
 		call ReadString
 		;add edx,eax
-		
-	
 
 	mov eax,fileHandle
 	mov edx,OFFSET buffer
