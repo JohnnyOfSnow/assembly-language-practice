@@ -5,7 +5,7 @@ TITLE Using WriteFile                  (WriteFile.asm)
 INCLUDE Irvine32.inc
 
 .data
-buffer DWORD 500 DUP(?)
+buffer DWORD 500 DUP(?),0dh,0ah
 ;buffer BYTE "This text is written to an output file.",0dh,0ah
 bufSize DWORD ($-buffer)
 errMsg BYTE "Cannot create file",0dh,0ah,0
@@ -40,22 +40,10 @@ main PROC
 	call WriteString
 	call Crlf
 
-	mov edx,OFFSET buffer
-	mov ecx,SIZEOF buffer
-
-	.WHILE ebx > 0
-		call ReadString
-		add edx,eax
-		call Crlf
-		sub ebx,1
-	.ENDW
-	
-	
-
 	INVOKE CreateFile,
 	  ADDR filename, GENERIC_WRITE, DO_NOT_SHARE, NULL,
-	  CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
-
+	  CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0
+	
 	mov fileHandle,eax			; save file handle
 	.IF eax == INVALID_HANDLE_VALUE
 	  mov  edx,OFFSET errMsg		; Display error message
@@ -63,12 +51,20 @@ main PROC
 	  jmp  QuitNow
 	.ENDIF
 
+	.WHILE ebx > 0
+		mov edx,OFFSET buffer
+		mov ecx,SIZEOF buffer
+		call ReadString
+		;add edx,eax
+		
+	
+
 	mov eax,fileHandle
 	mov edx,OFFSET buffer
 	mov ecx,bufSize
 	call WriteToFile
 	mov bytesWritten,eax
-	call CloseFile
+	
 
 	;INVOKE WriteFile,		; write text to file
 	    ;fileHandle,		; file handle
@@ -81,7 +77,10 @@ main PROC
 
       ;讓使用者輸入新建檔案的內容
 	;call CloseFile
-
+	call Crlf
+		sub ebx,1
+	.ENDW
+	call CloseFile
 QuitNow:
 	exit
 main ENDP
