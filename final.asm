@@ -7,7 +7,7 @@ INCLUDE Macros.inc
 
 .data
 BUFFER_SIZE = 400
-buffer BYTE 40 DUP(?),0dh,0ah
+buffer BYTE 40 DUP(?)
 ;buffer BYTE "This text is written to an output file.",0dh,0ah
 bufSize DWORD ($-buffer)
 errMsg BYTE "Cannot create file",0dh,0ah,0
@@ -28,7 +28,10 @@ LocationX BYTE 10
 LocationY BYTE 1
 filename2    BYTE 80 DUP(0)
 sysTime SYSTEMTIME <>
-hour WORD ?
+
+buffer1 BYTE BUFFER_SIZE DUP(?),0dh,0ah
+filename3    BYTE 80 DUP(0)
+fileHandle3  HANDLE ?
 
 .code
 main PROC
@@ -173,18 +176,18 @@ call CloseFile
 INVOKE CloseHandle,fileHandle
 
 
+
 ; Let user input a filename.
 	mWrite "Enter an input filename: "
-	mov	edx,OFFSET filename2
-	mov	ecx,SIZEOF filename2
+	mov	edx,OFFSET filename3
+	mov	ecx,SIZEOF filename3
 	call	ReadString
 
 
 ; Open the file for input.
-	mov	edx,OFFSET filename2
+	mov	edx,OFFSET filename3
 	call	OpenInputFile
-	mov	fileHandle,eax
-
+	mov	fileHandle3,eax
 
 ; Check for errors.
 	cmp	eax,INVALID_HANDLE_VALUE		; error opening file?
@@ -194,7 +197,7 @@ INVOKE CloseHandle,fileHandle
 file_ok:
 
 ; Read the file into a buffer.
-	mov	edx,OFFSET buffer
+	mov	edx,OFFSET buffer1
 	mov	ecx,BUFFER_SIZE
 	call	ReadFromFile
 	jnc	check_buffer_size			; error reading?
@@ -209,19 +212,23 @@ check_buffer_size:
 	jmp	quit						; and quit
 	
 buf_size_ok:	
-	mov	buffer[eax],0		; insert null terminator
+	mov	buffer1[eax],0		; insert null terminator
 	mWrite "File size: "
 	call	WriteDec			; display file size
 	call	Crlf
 
 ; Display the buffer.
-	mWrite <"Buffer:",0dh,0ah,0dh,0ah>
-	mov	edx,OFFSET buffer	; display the buffer
+	mWrite <"您輸入的資料為",0dh,0ah,0dh,0ah>
+	mov	edx,OFFSET buffer1	; display the buffer
+	.WHILE eax > 0
 	call	WriteString
+	add edx,1
+	sub eax,1
+	.ENDW
 	call	Crlf
 
 close_file:
-	mov	eax,fileHandle
+	mov	eax,fileHandle3
 	call	CloseFile
 
 
